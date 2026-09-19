@@ -1,0 +1,28 @@
+name: Octo Bypass Runner
+
+on:
+  workflow_dispatch: # Cho phép bấm nút chạy thủ công từ xa
+
+jobs:
+  run-bypass:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: |
+          npm install puppeteer puppeteer-extra puppeteer-extra-plugin-stealth
+
+      - name: Run Octo Script
+        env:
+          PROXY_SERVER: ${{ secrets.PROXY_SERVER }}
+          PROXY_USER: ${{ secrets.PROXY_USER }}
+          PROXY_PASS: ${{ secrets.PROXY_PASS }}
+          OCTO_URL: ${{ secrets.OCTO_URL }}
+        run: node octo.js
