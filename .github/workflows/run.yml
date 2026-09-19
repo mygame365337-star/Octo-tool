@@ -1,0 +1,39 @@
+name: Octo Bypass Runner
+
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: 'Link999 cần vượt'
+        required: true
+        type: string
+
+jobs:
+  run-bypass:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: |
+          npm install puppeteer puppeteer-extra puppeteer-extra-plugin-stealth
+
+      - name: Run Octo Script
+        env:
+          PROXY_SERVER: ${{ secrets.PROXY_SERVER }}
+          PROXY_USER: ${{ secrets.PROXY_USER }}
+          PROXY_PASS: ${{ secrets.PROXY_PASS }}
+          OCTO_URL: ${{ github.event.inputs.url }}
+        run: node octo.js
+
+      - name: Upload Result
+        uses: actions/upload-artifact@v4
+        with:
+          name: link-ket-qua
+          path: result.txt
